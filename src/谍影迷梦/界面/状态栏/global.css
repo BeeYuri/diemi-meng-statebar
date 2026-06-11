@@ -1,0 +1,28 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* 1930s Shanghai Spy Noir palette */
+  --c-parchment: #f5f0e8;
+  --c-ink: #1a1a1a;
+  --c-sepia-dark: #3d2b1f;
+  --c-sepia-mid: #6b4c3b;
+  --c-sepia-light: #c4a882;
+  --c-crimson: #8b1a1a;
+  --c-crimson-dim: #a05252;
+  --c-gold: #c9a84c;
+  --c-gold-light: #e8d5a3;
+  --c-jade: #2d5a3d;
+  --c-jade-light: #4a8c63;
+  --c-slate: #2c2c3a;
+  --c-slate-light: #4a4a5a;
+  --c-bone: #e8e0d5;
+  --c-danger: #8b1a1a;
+  --c-safe: #2d5a3d;
+
+  --font-dossier: 'Georgia', 'Noto Serif SC', serif;
+  --font-mono: 'Courier New', 'Microsoft YaHei', monospace;
+}
