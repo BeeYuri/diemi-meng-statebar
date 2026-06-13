@@ -1,73 +1,79 @@
 <template>
-  <div class="quest-panel">
-    <div class="section-title">📋 任务与委托</div>
+  <section class="quest-panel">
+    <div class="quest-heading">
+      <h2>任务与委托</h2>
+    </div>
     <div class="main-quest">
-      <div class="quest-tag main-tag">主线</div>
-      <div class="quest-info">
-        <span class="quest-name">{{ store.data.任务.当前主线任务 }}</span>
-        <span class="quest-time">⏳ 剩余 {{ store.data.任务.主线剩余时间 }}小时</span>
+      <span class="quest-tag">主线</span>
+      <div class="quest-copy">
+        <strong>{{ store.data.任务.当前主线任务 }}</strong>
+        <span>剩余 {{ store.data.任务.主线剩余时间 }} 小时</span>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { useDataStore } from '../store';
+
 const store = useDataStore();
 </script>
 
 <style lang="scss" scoped>
 .quest-panel {
-  padding: 8px 10px;
+  padding: 12px 14px 10px;
 }
 
-.section-title {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: var(--c-sepia-dark);
-  margin-bottom: 6px;
-  letter-spacing: 1px;
-  font-family: var(--font-mono);
+.quest-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.quest-heading h2 {
+  color: var(--book-blue);
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  letter-spacing: 0.05em;
 }
 
 .main-quest {
   display: flex;
   align-items: flex-start;
-  gap: 6px;
-  padding: 5px 7px;
-  background: linear-gradient(90deg, rgba(139, 26, 26, 0.06) 0%, transparent 100%);
-  border-left: 3px solid var(--c-crimson);
+  gap: 9px;
+  padding: 8px 10px;
+  background: linear-gradient(90deg, rgba(143, 48, 48, 0.08), transparent 78%);
+  border-left: 3px solid var(--annotation-red);
 }
 
 .quest-tag {
-  font-size: 0.6rem;
-  font-weight: bold;
-  padding: 1px 5px;
+  flex: 0 0 auto;
+  padding: 1px 6px;
+  color: var(--paper-light);
+  font-size: 0.64rem;
+  font-weight: 700;
+  background: var(--annotation-red);
   border-radius: 2px;
-  font-family: var(--font-mono);
-  white-space: nowrap;
-
-  &.main-tag {
-    background: var(--c-crimson);
-    color: var(--c-parchment);
-  }
 }
 
-.quest-info {
+.quest-copy {
   display: flex;
+  min-width: 0;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
-.quest-name {
+.quest-copy strong {
+  overflow-wrap: anywhere;
   font-size: 0.75rem;
-  font-weight: bold;
-  color: var(--c-ink);
+  font-weight: 700;
 }
 
-.quest-time {
+.quest-copy span {
+  color: var(--annotation-red);
+  font-family: var(--font-data);
   font-size: 0.65rem;
-  color: var(--c-crimson-dim);
-  font-family: var(--font-mono);
 }
 </style>
