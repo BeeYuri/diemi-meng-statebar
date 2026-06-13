@@ -21,7 +21,7 @@ interface Action {
   tag: string;
   label: string;
   style: 'low' | 'high' | 'pink';
-  promptTemplate: (ctx: { time: string; location: string }) => string;
+  promptTemplate: () => string;
 }
 
 const store = useDataStore();
@@ -31,31 +31,27 @@ const actions: Action[] = [
     tag: '低风险',
     label: '隐秘侦查',
     style: 'low',
-    promptTemplate: (ctx) =>
-      `[低风险行动] 当前时间: ${ctx.time}，地点: ${ctx.location}。我想采取谨慎的低风险行动——暗中观察、侧面打听、尾行跟踪、分析已有线索。`,
+    promptTemplate: () =>
+      '我决定谨慎行事，先不惊动任何人。暗中观察周围的动静，留意每一个细节；找个由头侧面打听消息，看能不能套出些有用的情报。安全第一，不急于求成。',
   },
   {
     tag: '高风险',
     label: '正面交锋',
     style: 'high',
-    promptTemplate: (ctx) =>
-      `[高风险行动] 当前时间: ${ctx.time}，地点: ${ctx.location}。我准备采取冒险行动——潜入禁区、武力对峙、当面对质、赌上性命的交涉。`,
+    promptTemplate: () =>
+      '不能再等了，我决定铤而走险。直接潜入目标地点，如果遭遇抵抗就正面交锋；该亮身份的时候绝不犹豫，用最快的速度拿到我需要的东西。',
   },
   {
     tag: '桃色',
     label: '情感深入',
     style: 'pink',
-    promptTemplate: (ctx) =>
-      `[桃色行动] 当前时间: ${ctx.time}，地点: ${ctx.location}。我想与当前交互对象发展更亲密的关系——制造独处机会、言语试探、身体接触、情感表达。`,
+    promptTemplate: () =>
+      '我放慢脚步，借着当下的气氛靠近她。用眼神试探她的反应，在言语间留出暧昧的余地；如果她并不抗拒，我想让这一刻继续深入下去。',
   },
 ];
 
 function triggerAction(action: Action) {
-  const ctx = {
-    time: store.data.系统.当前时间,
-    location: store.data.系统.当前地点,
-  };
-  const message = action.promptTemplate(ctx);
+  const message = action.promptTemplate();
   const $parentSend = window.parent.$('#send_textarea');
   if ($parentSend.length) {
     $parentSend.val(message).trigger('input');
