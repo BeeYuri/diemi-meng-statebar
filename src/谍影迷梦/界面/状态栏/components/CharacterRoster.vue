@@ -2,7 +2,12 @@
   <section class="roster">
     <div class="section-heading">
       <h2>人物档案</h2>
-      <span>FOLIO 02</span>
+      <div class="heading-right">
+        <button class="toggle-unacquainted" @click="showUnacquainted = !showUnacquainted">
+          {{ showUnacquainted ? '隐藏未结识' : '显示全部' }}
+        </button>
+        <span>FOLIO 02</span>
+      </div>
     </div>
     <div class="char-grid">
       <article
@@ -60,7 +65,7 @@
             >
               <span aria-hidden="true">{{ bodyPart.icon }}</span>
               <span>{{ bodyPart.key }}</span>
-              <small>{{ char.data.身体状态[bodyPart.key] }}</small>
+              <small>{{ bodyPartDisplay(char, bodyPart.key) }}</small>
             </button>
           </div>
 
@@ -89,11 +94,13 @@ type CharacterView = {
     堕落阶段: number;
     交互次数: number;
     身体状态: Record<BodyPartKey, BodyState>;
+    身体状态描述: Record<BodyPartKey, string>;
   };
 };
 
 const store = useDataStore();
 const expanded = ref<string | null>(null);
+const showUnacquainted = ref(false);
 const bodyParts: ReadonlyArray<{ key: BodyPartKey; icon: string }> = [
   { key: '口腔', icon: '👄' },
   { key: '双乳', icon: '🍒' },
@@ -103,16 +110,19 @@ const bodyParts: ReadonlyArray<{ key: BodyPartKey; icon: string }> = [
 ];
 const selectedBodyParts = ref<Partial<Record<string, BodyPartKey>>>({});
 
-const characters = computed<CharacterView[]>(() => [
-  { key: '沈静姝', code: '夜莺', data: store.data.沈静姝 },
-  { key: '顾曼筠', code: '', data: store.data.顾曼筠 },
-  { key: '白露凝', code: '', data: store.data.白露凝 },
-  { key: '藤原千代', code: '', data: store.data.藤原千代 },
-  { key: '萧佩玖', code: '', data: store.data.萧佩玖 },
-  { key: '文漪清', code: '启明星', data: store.data.文漪清 },
-  { key: '凯瑟琳·薇安', code: '', data: store.data.凯瑟琳·薇安 },
-  { key: '陆采薇', code: '', data: store.data.陆采薇 },
-]);
+const characters = computed<CharacterView[]>(() => {
+  const all: CharacterView[] = [
+    { key: '沈静姝', code: '夜莺', data: store.data.沈静姝 },
+    { key: '顾曼筠', code: '', data: store.data.顾曼筠 },
+    { key: '白露凝', code: '', data: store.data.白露凝 },
+    { key: '藤原千代', code: '', data: store.data.藤原千代 },
+    { key: '萧佩玖', code: '', data: store.data.萧佩玖 },
+    { key: '文漪清', code: '启明星', data: store.data.文漪清 },
+    { key: '凯瑟琳·薇安', code: '', data: store.data.凯瑟琳·薇安 },
+    { key: '陆采薇', code: '', data: store.data.陆采薇 },
+  ];
+  return showUnacquainted.value ? all : all.filter(c => c.data.是否相识);
+});
 
 function toggleDetail(char: CharacterView) {
   if (!char.data.是否相识) return;
@@ -131,9 +141,17 @@ function selectedBodyPart(char: CharacterView) {
   return selectedBodyParts.value[char.key];
 }
 
+function bodyPartDisplay(char: CharacterView, bodyPartKey: BodyPartKey): string {
+  const desc: string | undefined = char.data.身体状态描述?.[bodyPartKey];
+  if (desc && desc.trim()) return desc;
+  return char.data.身体状态[bodyPartKey];
+}
+
 function selectedBodyState(char: CharacterView) {
   const bodyPart = selectedBodyPart(char);
-  return bodyPart ? char.data.身体状态[bodyPart] : undefined;
+  if (!bodyPart) return undefined;
+  const desc: string | undefined = char.data.身体状态描述?.[bodyPart];
+  return desc?.trim() || char.data.身体状态[bodyPart];
 }
 
 function affectionColor(value: number) {
@@ -173,6 +191,30 @@ function stageLabel(stage: number) {
   font-family: var(--font-data);
   font-size: 0.62rem;
   letter-spacing: 0.12em;
+}
+
+.heading-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-unacquainted {
+  padding: 1px 6px;
+  font-family: var(--font-data);
+  font-size: 0.56rem;
+  color: var(--brass);
+  background: transparent;
+  border: 1px solid var(--line-soft);
+  border-radius: 2px;
+  cursor: pointer;
+  line-height: 1.6;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.toggle-unacquainted:hover {
+  color: var(--ink);
+  border-color: var(--brass);
 }
 
 .char-grid {

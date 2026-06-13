@@ -4,6 +4,8 @@
       <SystemHeader />
       <PlayerPanel />
       <CharacterRoster />
+      <ActionButtons />
+      <NewsPanel />
       <QuestPanel />
       <div class="bookplate" aria-hidden="true">
         <span>静安书局</span>
@@ -14,7 +16,9 @@
 </template>
 
 <script setup lang="ts">
+import ActionButtons from './components/ActionButtons.vue';
 import CharacterRoster from './components/CharacterRoster.vue';
+import NewsPanel from './components/NewsPanel.vue';
 import PlayerPanel from './components/PlayerPanel.vue';
 import QuestPanel from './components/QuestPanel.vue';
 import SystemHeader from './components/SystemHeader.vue';
