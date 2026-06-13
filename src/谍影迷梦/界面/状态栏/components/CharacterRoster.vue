@@ -1,63 +1,109 @@
 <template>
-  <div class="roster">
-    <div class="section-title">❤️ 人物档案</div>
+  <section class="roster">
+    <div class="section-heading">
+      <h2>人物档案</h2>
+      <span>FOLIO 02</span>
+    </div>
     <div class="char-grid">
-      <div
+      <article
         v-for="char in characters"
         :key="char.key"
         class="char-card"
-        :class="{ 'char-known': char.data.是否相识, 'char-active': char.data.是否相识 && char.data.好感度 >= 50 }"
+        :class="{
+          'char-known': char.data.是否相识,
+          'char-active': char.data.是否相识 && char.data.好感度 >= 50,
+          'char-expanded': expanded === char.key,
+        }"
+        :role="char.data.是否相识 ? 'button' : undefined"
+        :tabindex="char.data.是否相识 ? 0 : undefined"
+        :aria-expanded="char.data.是否相识 ? expanded === char.key : undefined"
         @click="toggleDetail(char)"
+        @keydown.enter.prevent="toggleDetail(char)"
+        @keydown.space.prevent="toggleDetail(char)"
       >
         <div class="char-header">
           <span class="char-name">{{ char.key }}</span>
           <span v-if="char.code" class="char-code">「{{ char.code }}」</span>
         </div>
+
         <div v-if="char.data.是否相识" class="char-affection">
-          <div class="aff-bar-wrap">
+          <div class="affection-meter" aria-hidden="true">
             <div
-              class="aff-bar"
-              :style="{ width: char.data.好感度 + '%', background: affectionColor(char.data.好感度) }"
+              class="affection-fill"
+              :style="{ width: `${char.data.好感度}%`, backgroundColor: affectionColor(char.data.好感度) }"
             ></div>
           </div>
-          <span class="aff-val">{{ char.data.好感度 }}/100</span>
+          <span>{{ char.data.好感度 }}/100</span>
         </div>
-        <div v-else class="char-locked">
-          <span class="lock-icon">🔒</span> 尚未相识
-        </div>
+        <div v-else class="char-locked"><span aria-hidden="true">◇</span> 尚未相识</div>
 
-        <!-- Expanded detail -->
         <div v-if="expanded === char.key && char.data.是否相识" class="char-detail">
-          <div class="detail-row">
-            <span class="detail-label">堕落阶段</span>
-            <span class="detail-val stage-badge" :class="`stage-${char.data.堕落阶段}`">
-              {{ stageLabel(char.data.堕落阶段) }}
-            </span>
-            <span class="detail-label">互动</span>
-            <span class="detail-val">{{ char.data.交互次数 }}次</span>
+          <div class="detail-ledger">
+            <span>堕落阶段</span>
+            <strong :class="`stage-${char.data.堕落阶段}`">{{ stageLabel(char.data.堕落阶段) }}</strong>
+            <span>互动</span>
+            <strong>{{ char.data.交互次数 }}次</strong>
           </div>
-          <div class="body-status">
-            <div v-for="b in bodyParts" :key="b.key" class="body-part">
-              <span class="body-icon">{{ b.icon }}</span>
-              <span class="body-state" :class="`body-${char.data.身体状态[b.key]}`">
-                {{ char.data.身体状态[b.key] === '纯洁' ? '✦' : '♥' }}
-              </span>
-            </div>
+
+          <div class="body-status" aria-label="身体状态">
+            <button
+              v-for="bodyPart in bodyParts"
+              :key="bodyPart.key"
+              type="button"
+              class="body-part"
+              :class="[
+                `body-${char.data.身体状态[bodyPart.key]}`,
+                { selected: isBodyPartSelected(char.key, bodyPart.key) },
+              ]"
+              :aria-pressed="isBodyPartSelected(char.key, bodyPart.key)"
+              @click.stop="selectBodyPart(char.key, bodyPart.key)"
+            >
+              <span aria-hidden="true">{{ bodyPart.icon }}</span>
+              <span>{{ bodyPart.key }}</span>
+              <small>{{ char.data.身体状态[bodyPart.key] }}</small>
+            </button>
+          </div>
+
+          <div v-if="selectedBodyPart(char)" class="body-detail" aria-live="polite">
+            <strong>{{ selectedBodyPart(char) }}</strong>
+            <span>状态：{{ selectedBodyState(char) }}</span>
           </div>
         </div>
-      </div>
+      </article>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useDataStore } from '../store';
 
+type BodyState = '纯洁' | '经验';
+type BodyPartKey = '口腔' | '双乳' | '嫩屄' | '臀部' | '玉足';
+type CharacterView = {
+  key: string;
+  code: string;
+  data: {
+    是否相识: boolean;
+    好感度: number;
+    堕落阶段: number;
+    交互次数: number;
+    身体状态: Record<BodyPartKey, BodyState>;
+  };
+};
+
 const store = useDataStore();
 const expanded = ref<string | null>(null);
+const bodyParts: ReadonlyArray<{ key: BodyPartKey; icon: string }> = [
+  { key: '口腔', icon: '👄' },
+  { key: '双乳', icon: '🍒' },
+  { key: '嫩屄', icon: '🌸' },
+  { key: '臀部', icon: '🍑' },
+  { key: '玉足', icon: '👣' },
+];
+const selectedBodyParts = ref<Partial<Record<string, BodyPartKey>>>({});
 
-const characters = computed(() => [
+const characters = computed<CharacterView[]>(() => [
   { key: '沈静姝', code: '夜莺', data: store.data.沈静姝 },
   { key: '顾曼筠', code: '', data: store.data.顾曼筠 },
   { key: '白露凝', code: '', data: store.data.白露凝 },
@@ -68,174 +114,275 @@ const characters = computed(() => [
   { key: '陆采薇', code: '', data: store.data.陆采薇 },
 ]);
 
-const bodyParts = [
-  { key: '口腔', icon: '👄' },
-  { key: '双乳', icon: '🍒' },
-  { key: '嫩屄', icon: '🌸' },
-  { key: '臀部', icon: '🍑' },
-  { key: '玉足', icon: '👣' },
-];
-
-function toggleDetail(char: any) {
+function toggleDetail(char: CharacterView) {
+  if (!char.data.是否相识) return;
   expanded.value = expanded.value === char.key ? null : char.key;
 }
 
-function affectionColor(val: number): string {
-  if (val < 25) return 'var(--c-slate-light)';
-  if (val < 55) return 'var(--c-gold)';
-  return 'var(--c-crimson)';
+function selectBodyPart(characterKey: string, bodyPartKey: BodyPartKey) {
+  selectedBodyParts.value[characterKey] = bodyPartKey;
 }
 
-function stageLabel(stage: number): string {
-  const labels = ['未觉醒', '❶ 初萌', '❷ 暗涌', '❸ 沉溺'];
-  return labels[stage] || '未知';
+function isBodyPartSelected(characterKey: string, bodyPartKey: BodyPartKey) {
+  return selectedBodyParts.value[characterKey] === bodyPartKey;
+}
+
+function selectedBodyPart(char: CharacterView) {
+  return selectedBodyParts.value[char.key];
+}
+
+function selectedBodyState(char: CharacterView) {
+  const bodyPart = selectedBodyPart(char);
+  return bodyPart ? char.data.身体状态[bodyPart] : undefined;
+}
+
+function affectionColor(value: number) {
+  if (value < 25) return 'var(--book-blue)';
+  if (value < 55) return 'var(--brass)';
+  return 'var(--annotation-red)';
+}
+
+function stageLabel(stage: number) {
+  return ['未觉醒', '初萌', '暗涌', '沉溺'][stage] ?? '未知';
 }
 </script>
 
 <style lang="scss" scoped>
 .roster {
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--c-sepia-light);
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
 }
 
-.section-title {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: var(--c-sepia-dark);
-  margin-bottom: 6px;
-  letter-spacing: 1px;
-  font-family: var(--font-mono);
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+
+.section-heading h2 {
+  color: var(--book-blue);
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  letter-spacing: 0.06em;
+}
+
+.section-heading span {
+  color: var(--brass);
+  font-family: var(--font-data);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
 }
 
 .char-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-  gap: 4px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
 }
 
 .char-card {
-  border: 1px solid var(--c-sepia-light);
-  padding: 5px 7px;
+  min-width: 0;
+  padding: 7px 8px;
+  background: rgba(247, 240, 223, 0.46);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  outline: none;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.char-known {
   cursor: pointer;
-  transition: all 0.2s;
-  background: rgba(255,255,255,0.4);
+}
 
-  &:hover {
-    border-color: var(--c-gold);
-    background: rgba(255,255,255,0.8);
-  }
+.char-known:hover,
+.char-known:focus-visible {
+  background: rgba(247, 240, 223, 0.82);
+  border-color: rgba(169, 139, 80, 0.82);
+  box-shadow: inset 3px 0 var(--brass);
+}
 
-  &.char-active {
-    border-left: 3px solid var(--c-crimson);
-    background: linear-gradient(90deg, rgba(139, 26, 26, 0.05) 0%, rgba(255,255,255,0.4) 100%);
-  }
+.char-active {
+  box-shadow: inset 3px 0 rgba(143, 48, 48, 0.72);
+}
+
+.char-expanded {
+  grid-column: 1 / -1;
+  background: rgba(247, 240, 223, 0.9);
+  border-color: rgba(64, 80, 90, 0.55);
 }
 
 .char-header {
   display: flex;
-  align-items: center;
-  gap: 3px;
-  margin-bottom: 3px;
+  min-width: 0;
+  align-items: baseline;
+  gap: 5px;
+  margin-bottom: 4px;
 }
 
 .char-name {
-  font-size: 0.78rem;
-  font-weight: bold;
-  color: var(--c-ink);
+  overflow-wrap: anywhere;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
 .char-code {
-  font-size: 0.6rem;
-  color: var(--c-crimson-dim);
+  color: var(--annotation-red);
+  font-size: 0.62rem;
 }
 
 .char-affection {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 7px;
+  color: var(--ink-muted);
+  font-family: var(--font-data);
+  font-size: 0.61rem;
 }
 
-.aff-bar-wrap {
-  flex: 1;
+.affection-meter {
   height: 4px;
-  background: rgba(0,0,0,0.06);
-  border-radius: 2px;
+  min-width: 52px;
+  flex: 1;
   overflow: hidden;
+  background: rgba(70, 62, 50, 0.1);
 }
 
-.aff-bar {
+.affection-fill {
   height: 100%;
-  border-radius: 2px;
-  transition: width 0.8s ease;
-}
-
-.aff-val {
-  font-size: 0.6rem;
-  font-family: var(--font-mono);
-  color: var(--c-sepia-mid);
-  width: 32px;
-  text-align: right;
+  transition: width 180ms ease;
 }
 
 .char-locked {
-  font-size: 0.65rem;
-  color: var(--c-sepia-light);
-  font-style: italic;
-}
-
-.lock-icon {
-  font-size: 0.7rem;
+  color: var(--ink-muted);
+  font-size: 0.66rem;
 }
 
 .char-detail {
-  margin-top: 5px;
-  padding-top: 5px;
-  border-top: 1px dashed var(--c-sepia-light);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(92, 78, 57, 0.34);
 }
 
-.detail-row {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-bottom: 4px;
-  font-size: 0.68rem;
+.detail-ledger {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  justify-content: start;
+  gap: 5px 9px;
+  margin-bottom: 8px;
+  color: var(--ink-muted);
+  font-size: 0.66rem;
 }
 
-.detail-label {
-  color: var(--c-sepia-mid);
-  font-size: 0.6rem;
+.detail-ledger strong {
+  color: var(--ink);
 }
 
-.stage-badge {
-  padding: 0 4px;
+.detail-ledger [class^='stage-'] {
+  padding: 0 5px;
+  color: var(--paper-light);
+  background: var(--book-blue);
   border-radius: 2px;
-  font-weight: bold;
-  font-size: 0.65rem;
+}
 
-  &.stage-0 { background: var(--c-slate-light); color: var(--c-parchment); }
-  &.stage-1 { background: var(--c-gold); color: var(--c-ink); }
-  &.stage-2 { background: var(--c-crimson-dim); color: var(--c-parchment); }
-  &.stage-3 { background: var(--c-crimson); color: var(--c-parchment); }
+.detail-ledger .stage-1 {
+  color: var(--ink);
+  background: var(--brass);
+}
+
+.detail-ledger .stage-2,
+.detail-ledger .stage-3 {
+  background: var(--annotation-red);
 }
 
 .body-status {
-  display: flex;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(74px, 1fr));
+  gap: 5px;
 }
 
 .body-part {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 4px;
+  min-width: 0;
+  padding: 5px 6px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid var(--line-soft);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.body-part:hover {
+  border-color: var(--brass);
+}
+
+.body-part:active {
+  transform: translateY(1px);
+}
+
+.body-part:focus-visible {
+  outline: 2px solid var(--book-blue);
+  outline-offset: 1px;
+}
+
+.body-part.selected {
+  background: var(--paper-light);
+  border-color: var(--book-blue);
+  box-shadow: inset 0 -2px var(--book-blue);
+}
+
+.body-part small {
+  grid-column: 2;
+  font-size: 0.58rem;
+}
+
+.body-纯洁 small {
+  color: var(--book-blue);
+}
+
+.body-经验 small {
+  color: var(--annotation-red);
+  font-weight: 700;
+}
+
+.body-detail {
   display: flex;
-  align-items: center;
-  gap: 1px;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 7px;
+  padding: 5px 7px;
+  color: var(--ink-muted);
+  font-size: 0.67rem;
+  background: rgba(64, 80, 90, 0.06);
+  border-left: 2px solid var(--book-blue);
 }
 
-.body-icon {
-  font-size: 0.7rem;
+.body-detail strong {
+  color: var(--ink);
+  font-family: var(--font-display);
 }
 
-.body-state {
-  font-size: 0.65rem;
-  &.body-纯洁 { color: var(--c-slate-light); }
-  &.body-经验 { color: var(--c-crimson); }
+@media (max-width: 600px) {
+  .body-status {
+    grid-template-columns: repeat(3, minmax(74px, 1fr));
+  }
+}
+
+@media (max-width: 380px) {
+  .char-grid {
+    gap: 5px;
+  }
+
+  .char-card {
+    padding: 6px;
+  }
+
+  .body-status {
+    grid-template-columns: repeat(2, minmax(74px, 1fr));
+  }
 }
 </style>
