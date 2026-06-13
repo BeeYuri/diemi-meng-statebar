@@ -1,10 +1,11 @@
 <template>
-  <section v-if="newsEntries.length > 0" class="news-panel">
+  <section class="news-panel">
     <div class="section-heading">
       <h2>今日消息</h2>
       <span>FOLIO 03</span>
     </div>
-    <ul class="news-list">
+    <p v-if="!hasNews" class="news-empty">暂无新消息</p>
+    <ul v-else class="news-list">
       <li v-for="(item, id) in newsEntries" :key="id" class="news-item">
         <span class="news-badge" :class="`badge-${item.类型}`">{{ item.类型 }}</span>
         <span class="news-source">{{ item.来源 }}</span>
@@ -34,6 +35,8 @@ const newsEntries = computed<Record<string, NewsItem>>(() => {
   const list = (store.data as any).新闻?.当前新闻列表;
   return list || {};
 });
+
+const hasNews = computed(() => Object.keys(newsEntries.value).length > 0);
 </script>
 
 <style lang="scss" scoped>
@@ -128,5 +131,15 @@ const newsEntries = computed<Record<string, NewsItem>>(() => {
   color: var(--ink);
   flex: 1;
   min-width: 0;
+}
+
+.news-empty {
+  padding: 8px 7px;
+  color: var(--ink-muted);
+  font-size: 0.7rem;
+  font-style: italic;
+  background: rgba(247, 240, 223, 0.38);
+  border-left: 2px solid var(--line);
+  border-radius: 0 2px 2px 0;
 }
 </style>
