@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "系统": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "当前时间": {
+          "default": "1938年10月12日 16时15分",
+          "type": "string"
+        },
+        "当前地点": {
+          "default": "法租界 霞飞路 静安书局",
+          "type": "string"
+        },
+        "警觉度": {
+          "default": "低",
+          "type": "string",
+          "enum": [
+            "低",
+            "中",
+            "高"
+          ]
+        },
+        "总轮次": {
+          "default": 0,
+          "type": "number"
+        }
+      }
+    },
+    "主角": {
+      "type": "object",
+      "properties": {
+        "枪械": {
+          "type": "number"
+        },
+        "潜行": {
+          "type": "number"
+        },
+        "交际": {
+          "type": "number"
+        },
+        "观察": {
+          "type": "number"
+        },
+        "持有金钱": {
+          "default": 500,
+          "type": "number"
+        },
+        "持有道具": {
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "青帮声望": {
+          "type": "number"
+        },
+        "巡捕房声望": {
+          "type": "number"
+        }
+      }
+    },
+    "任务": {
+      "default": {},
+      "type": "object",
+      "properties": {
+        "当前主线任务": {
+          "default": "(考验) 夜莺的考验: 调查圣约翰大学情报泄露源头",
+          "type": "string"
+        },
+        "主线剩余时间": {
+          "default": 71,
+          "type": "number"
+        },
+        "支线任务列表": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        },
+        "当前委托列表": {
+          "default": {},
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {}
+        }
+      }
+    },
+    "沈静姝": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "顾曼筠": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "白露凝": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "藤原千代": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "萧佩玖": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "文漪清": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "凯瑟琳·薇安": {
+      "$ref": "#/$defs/__schema0"
+    },
+    "陆采薇": {
+      "$ref": "#/$defs/__schema0"
+    }
+  },
+  "$defs": {
+    "__schema0": {
+      "type": "object",
+      "properties": {
+        "好感度": {
+          "type": "number"
+        },
+        "堕落阶段": {
+          "type": "number"
+        },
+        "是否相识": {
+          "default": false,
+          "type": "boolean"
+        },
+        "交互次数": {
+          "default": 0,
+          "type": "number"
+        },
+        "身体状态": {
+          "default": {},
+          "type": "object",
+          "properties": {
+            "口腔": {
+              "default": "纯洁",
+              "type": "string",
+              "enum": [
+                "纯洁",
+                "经验"
+              ]
+            },
+            "双乳": {
+              "default": "纯洁",
+              "type": "string",
+              "enum": [
+                "纯洁",
+                "经验"
+              ]
+            },
+            "嫩屄": {
+              "default": "纯洁",
+              "type": "string",
+              "enum": [
+                "纯洁",
+                "经验"
+              ]
+            },
+            "臀部": {
+              "default": "纯洁",
+              "type": "string",
+              "enum": [
+                "纯洁",
+                "经验"
+              ]
+            },
+            "玉足": {
+              "default": "纯洁",
+              "type": "string",
+              "enum": [
+                "纯洁",
+                "经验"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
