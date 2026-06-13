@@ -5,24 +5,49 @@
 }
 
 :root {
-  /* 1930s Shanghai Spy Noir palette */
-  --c-parchment: #f5f0e8;
-  --c-ink: #1a1a1a;
-  --c-sepia-dark: #3d2b1f;
-  --c-sepia-mid: #6b4c3b;
-  --c-sepia-light: #c4a882;
-  --c-crimson: #8b1a1a;
-  --c-crimson-dim: #a05252;
-  --c-gold: #c9a84c;
-  --c-gold-light: #e8d5a3;
-  --c-jade: #2d5a3d;
-  --c-jade-light: #4a8c63;
-  --c-slate: #2c2c3a;
-  --c-slate-light: #4a4a5a;
-  --c-bone: #e8e0d5;
-  --c-danger: #8b1a1a;
-  --c-safe: #2d5a3d;
+  --paper: #eee4cf;
+  --paper-light: #f7f0df;
+  --book-blue: #40505a;
+  --ink: #282722;
+  --ink-muted: #746c5f;
+  --annotation-red: #8f3030;
+  --brass: #a98b50;
+  --jade: #416756;
+  --line: rgba(92, 78, 57, 0.28);
+  --line-soft: rgba(92, 78, 57, 0.14);
+  --shadow: rgba(43, 38, 29, 0.22);
 
-  --font-dossier: 'Georgia', 'Noto Serif SC', serif;
-  --font-mono: 'Courier New', 'Microsoft YaHei', monospace;
+  --font-body: 'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-display: 'YouYuan', 'Microsoft YaHei UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  --font-data: 'Cascadia Mono', 'Consolas', monospace;
+}
+
+html,
+body {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+body {
+  overflow-x: hidden;
+  padding: 6px;
+}
+
+button {
+  color: inherit;
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
