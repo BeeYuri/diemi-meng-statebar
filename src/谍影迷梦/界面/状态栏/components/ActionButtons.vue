@@ -56,7 +56,11 @@ function triggerAction(action: Action) {
     location: store.data.系统.当前地点,
   };
   const message = action.promptTemplate(ctx);
-  (window as any).createChatMessages([{ role: 'user', message }], { refresh: 'all' });
+  const $parentSend = window.parent.$('#send_textarea');
+  if ($parentSend.length) {
+    $parentSend.val(message).trigger('input');
+    window.parent.SillyTavern?.activateSendButtons?.();
+  }
 }
 </script>
 
