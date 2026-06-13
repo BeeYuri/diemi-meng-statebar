@@ -3,15 +3,15 @@
     <div class="sys-row">
       <div class="sys-time">
         <span class="sys-icon">🕒</span>
-        <span>{{ store.stat_data.系统.当前时间 }}</span>
+        <span>{{ store.data.系统.当前时间 }}</span>
       </div>
       <div class="sys-loc">
         <span class="sys-icon">📍</span>
-        <span>{{ store.stat_data.系统.当前地点 }}</span>
+        <span>{{ store.data.系统.当前地点 }}</span>
       </div>
-      <div class="sys-alert" :class="`alert-${store.stat_data.系统.警觉度}`">
+      <div class="sys-alert" :class="`alert-${store.data.系统.警觉度}`">
         <span class="sys-icon">🚨</span>
-        <span>警觉: {{ store.stat_data.系统.警觉度 }}</span>
+        <span>警觉: {{ store.data.系统.警觉度 }}</span>
       </div>
     </div>
   </div>

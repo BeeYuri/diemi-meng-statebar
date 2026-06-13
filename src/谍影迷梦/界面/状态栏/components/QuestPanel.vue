@@ -4,8 +4,8 @@
     <div class="main-quest">
       <div class="quest-tag main-tag">主线</div>
       <div class="quest-info">
-        <span class="quest-name">{{ store.stat_data.任务.当前主线任务 }}</span>
-        <span class="quest-time">⏳ 剩余 {{ store.stat_data.任务.主线剩余时间 }}小时</span>
+        <span class="quest-name">{{ store.data.任务.当前主线任务 }}</span>
+        <span class="quest-time">⏳ 剩余 {{ store.data.任务.主线剩余时间 }}小时</span>
       </div>
     </div>
   </div>

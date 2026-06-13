@@ -6,15 +6,15 @@
         <span class="skill-icon">{{ s.icon }}</span>
         <span class="skill-name">{{ s.label }}</span>
         <div class="skill-bar-wrap">
-          <div class="skill-bar" :style="{ width: (store.stat_data.主角[s.key] ?? 0) + '%', background: s.color }"></div>
+          <div class="skill-bar" :style="{ width: (store.data.主角[s.key] ?? 0) + '%', background: s.color }"></div>
         </div>
-        <span class="skill-val">{{ store.stat_data.主角[s.key] }}/100</span>
+        <span class="skill-val">{{ store.data.主角[s.key] }}/100</span>
       </div>
     </div>
     <div class="resource-row">
-      <span class="res-item">💰 {{ store.stat_data.主角.持有金钱 }} <span class="res-unit">大洋</span></span>
-      <span class="res-item res-faction">青帮: <strong>{{ store.stat_data.主角.青帮声望 }}/100</strong></span>
-      <span class="res-item res-faction">巡捕房: <strong>{{ store.stat_data.主角.巡捕房声望 }}/100</strong></span>
+      <span class="res-item">💰 {{ store.data.主角.持有金钱 }} <span class="res-unit">大洋</span></span>
+      <span class="res-item res-faction">青帮: <strong>{{ store.data.主角.青帮声望 }}/100</strong></span>
+      <span class="res-item res-faction">巡捕房: <strong>{{ store.data.主角.巡捕房声望 }}/100</strong></span>
     </div>
   </div>
 </template>

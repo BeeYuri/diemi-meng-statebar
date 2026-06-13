@@ -51,22 +51,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useDataStore } from '../store';
 
 const store = useDataStore();
 const expanded = ref<string | null>(null);
 
-const characters = [
-  { key: '沈静姝', code: '夜莺' },
-  { key: '顾曼筠', code: '' },
-  { key: '白露凝', code: '' },
-  { key: '藤原千代', code: '' },
-  { key: '萧佩玖', code: '' },
-  { key: '文漪清', code: '启明星' },
-  { key: '凯瑟琳·薇安', code: '' },
-  { key: '陆采薇', code: '' },
-];
+const characters = computed(() => [
+  { key: '沈静姝', code: '夜莺', data: store.data.沈静姝 },
+  { key: '顾曼筠', code: '', data: store.data.顾曼筠 },
+  { key: '白露凝', code: '', data: store.data.白露凝 },
+  { key: '藤原千代', code: '', data: store.data.藤原千代 },
+  { key: '萧佩玖', code: '', data: store.data.萧佩玖 },
+  { key: '文漪清', code: '启明星', data: store.data.文漪清 },
+  { key: '凯瑟琳·薇安', code: '', data: store.data.凯瑟琳·薇安 },
+  { key: '陆采薇', code: '', data: store.data.陆采薇 },
+]);
 
 const bodyParts = [
   { key: '口腔', icon: '👄' },
